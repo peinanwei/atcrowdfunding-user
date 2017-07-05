@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.atguigu.atcrowdfunding.user.dao.MemberDao">
+
+	<!-- 更新会员的基本信息 -->
+	<update id="updateMemberBasicinfo">
+	update
+		t_member
+	set
+		realname=#{realname},
+		cardnum=#{cardnum},
+		tel=#{tel}
+	where
+		id=#{id}
+	</update>
+
+	<!--验证成功更新会员的实名认证状态  -->
+	<update id="updateAuthstatus">
+	update
+		t_member
+	set
+		authstatus=#{authstatus}
+	where
+		id=#{id}
+	
+	</update>
+
+	<!--根据type查询cert  -->
+	<select id="queryCertByType"  resultType="cert">
+	
+	select
+		*
+	from
+		t_cert
+	where
+		id in(
+			select
+				certid
+			from
+				t_account_type_cert
+			where
+				accttype=#{accttype}
+		)
+	</select>
+	
+	<!-- 更新ticket审批表单插入流程实例id,验证码,以及更新审批步骤 -->
+	<update id="updateTicket">
+	update 
+		t_ticket
+	set
+		piid=#{piid},
+		authcode=#{authcode},
+		pstep=#{pstep}
+	where
+		memberid=#{memberid}
+	</update>
+	
+	<!--插入会员的资质文件  -->
+	<insert id="insertMemberCert">
+		insert into t_member_cert (
+	            memberid,certid,iconpath
+        ) values (
+            #{memberid},#{certid},#{iconpath}
+        )	
+	</insert>
+	
+	<!-- 根据ticketid更新ticket的pstep -->
+	<update id="updateTicketProcessStep">
+	update 
+		t_ticket
+	set
+		pstep =#{pstep}
+	where
+		id=#{id}
+	</update>
+
+	<!--根据会员id创建ticket表  -->
+	<insert id="insertTicket">
+	insert into t_ticket
+		(memberid,status,pstep)
+	values
+		(#{memberid},#{status},#{pstep})
+	</insert>
+
+	<!-- 根据会员信息获取ticket审批单 -->
+	<select id="queryTicketByMember"  resultType="ticket">
+	select 
+		*
+	from
+		t_ticket
+	where
+		memberid=#{id}
+	</select>
+	
+	<!-- 更新会员的accttype-->
+	<update id="udpateAccttype">
+	update 
+		t_member
+	set 
+		accttype= #{accttype}
+	where
+		id=#{id}
+	</update>
+
+	<!-- 会员登陆验证 -->
+	<select id="queryMember" resultType="member">
+	select 
+		*
+	from
+		t_member
+	where
+		loginacct=#{loginacct}
+	and
+		userpswd=#{userpswd}
+	</select>
+	
+</mapper>

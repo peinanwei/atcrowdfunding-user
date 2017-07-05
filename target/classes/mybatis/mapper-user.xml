@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.atguigu.atcrowdfunding.user.dao.UserDao">
+
+	<!-- 根据用户id查询权限信息 -->
+	<select id="getPermissionidsById" resultType="int">
+		select 
+			roleid
+		from 
+			t_user_role
+		where
+			userid=#{userid}
+	</select>
+
+	<!--更新消息 -->
+	<update id="editMessage">
+		update
+		t_message
+		set
+		content=#{mes}
+		where
+		memberid=#{messageid};
+	</update>
+
+	<!-- 获取信息 -->
+	<select id="getMessage" resultType="String">
+		select
+		content
+		from
+		t_message
+		where
+		memberid=#{messageId};
+	</select>
+	<select id="queryRolesByUserId" resultType="int">
+		select
+		roleId
+		from
+		t_user_role
+		where
+		userId=#{userId}
+	</select>
+
+	<insert id="insertUserRole">
+		insert into t_user_role (
+		userId,roleId
+		) values
+		(
+		#{userId}, #{roleId}
+		)
+	</insert>
+	
+	<delete id="deleteUserRoles">
+        delete from t_user_role where userId = #{userId} and roleId in
+        <foreach collection="roleIds" item="roleId" open="(" close=")" separator=",">
+        #{roleId}
+        </foreach>
+    </delete>
+
+	<select id="queryUserById" resultType="user">
+		select * from t_user
+		where
+		id = #{id}
+	</select>
+	<select id="queryUser" resultType="user">
+		select * from t_user
+		where
+		loginacct = #{loginacct} and userpswd = #{userpswd}
+	</select>
+	<select id="pageQuery" resultType="user">
+		select * from t_user
+		<where>
+			<if test="pageText != null">
+				and loginacct like concat('%', #{pageText}, '%')
+			</if>
+		</where>
+		order by createtime desc
+		limit #{start},#{size}
+	</select>
+	<select id="queryCount" resultType="int">
+		select count(*) from t_user
+		<where>
+			<if test="pageText != null">
+				and loginacct like concat('%', #{pageText}, '%')
+			</if>
+		</where>
+	</select>
+
+
+
+
+	<insert id="saveUser">
+		insert into t_user (
+		loginacct,userpswd,email
+		) values
+		(
+		#{loginacct}, #{userpswd},#{email}
+		)
+	</insert>
+	<insert id="insertUser">
+		insert into t_user (
+		loginacct,username,userpswd,email,createtime
+		) values
+		(
+		#{loginacct},
+		#{username},#{userpswd},#{email},#{createtime}
+		)
+	</insert>
+	<update id="updateUser">
+		update t_user set loginacct = #{loginacct}, username
+		= #{username}, email = #{email}
+		where id = #{id}
+	</update>
+	<delete id="deleteUser">
+		delete from t_user where id = #{id}
+	</delete>
+
+	<delete id="deleteUsers">
+		delete from t_user where id in
+		<foreach collection="datas" item="user" open="(" close=")"
+			separator=",">
+			#{user.id}
+		</foreach>
+	</delete>
+
+	<!-- <select id="queryRolePermissionByUser" resultType="permission"> select 
+		* from t_permission where id in ( select rp.permissionid from t_role_permission 
+		rp join t_user_role ur on ur.roleid = rp.roleid and ur.userid = #{id} ) and 
+		id != pid order by seqno </select> <insert id="insertUser"> insert into t_user 
+		( name,userpswd,sex,email,loginacct ) values ( #{name},#{userpswd},#{sex},#{email},#{loginacct} 
+		) <selectKey keyProperty="id" resultType="int"> select @@identity as id </selectKey> 
+		</insert> <update id="updateUser"> update t_user set name = #{name}, sex 
+		= #{sex}, email = #{email}, loginacct = #{loginacct} where id = #{id} </update> 
+		<delete id="deleteUserRole"> delete from t_user_role where userid = #{userid} 
+		and roleid = #{roleid} </delete> -->
+</mapper>

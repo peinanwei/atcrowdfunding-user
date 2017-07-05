@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.atguigu.atcrowdfunding.user.dao.RoleDao">
+
+
+	<!-- 首先清空roleid的项 -->
+	<delete id="deletePermissions">
+	delete from 
+		t_role_permission
+	where
+		roleid=#{roleid}
+	</delete>
+	
+	<!-- 再根据roleid插入新的数据 -->
+	<insert id="insertPermission">
+	insert into t_role_permission
+		(roleid,permissionid)
+	values
+		(#{roleid},#{perid})
+	</insert>
+	
+	<!-- 根据角色id获取对应的权限信息id -->
+	<select id="getPermissionsIdByRoleId" resultType="int">
+		select 
+			permissionid
+		from 
+			t_role_permission
+		where
+			roleid =#{roleid}
+	</select>
+
+    <select id="queryAll" resultType="role" >
+        select * from t_role
+    </select>
+    <select id="pageQueryRole" resultType="role" >
+        select * from t_role
+         <where>
+        	<if test="pagetext != null">
+        		and name like concat('%',#{pagetext},'%')
+        	</if>
+        </where>
+        limit #{start},#{size}
+    </select>
+    
+     <select id="queryCount" resultType="int">
+        select count(*) from t_role
+         <where>
+        	<if test="pagetext != null">
+        		and name like concat('%',#{pagetext},'%')
+        	</if>
+        </where> 
+    </select>
+    
+    <insert id="insertRole" >
+    	insert into t_role(name)
+    	values(#{name})
+    	
+    </insert>
+    
+    <update id="updateRole">
+    	update t_role
+        set name = #{name}
+        where id = #{id}
+    </update>
+    
+    <select id="queryId" resultType="role">
+        select * from t_role where id = #{id}
+    </select>
+    
+    <delete id="delete">
+    	delete from t_role where id = #{id}
+    </delete>
+    
+     <delete id="deletes">
+    	delete from t_role where id in
+    	<foreach collection="datasRole" item="role" open="(" close=")" separator=",">
+    		#{role.id}
+    	</foreach>
+    </delete>
+</mapper>

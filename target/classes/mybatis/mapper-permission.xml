@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.atguigu.atcrowdfunding.user.dao.PermissionDao">
+
+	<!-- 删除节点 -->
+	<delete id="delteNode">
+	delete from
+		t_permission
+	where
+		id=#{id}
+	
+	</delete>
+
+	<!--修改节点信息  -->
+	<update id="update">
+	update 
+		t_permission
+	set
+		name=#{name},
+		url=#{url}
+	where
+		id=#{id}
+	
+	</update>
+
+	<!-- 查询单个节点 -->
+	<select id="getPermissinById" resultType="permission">
+		select 
+			*
+		from
+			t_permission
+		where
+			id=#{id}
+	</select>
+
+	<!-- 插入许可 -->
+	<insert id="insert">
+	insert into
+		t_permission
+		(name,pid,url)
+	values
+		(#{name},#{pid},#{url})
+	</insert>
+	
+	<!-- 查询所有节点 -->
+	<select id="queryAll" resultType="permission">
+		select 
+			*
+		from
+			t_permission
+	</select>
+
+	<!-- 查询所有的父节点 -->
+	<select id="queryRootPermisssions" resultType="permission">
+		select 
+			*
+		from
+			t_permission
+		where
+			pid is null
+	</select>
+	
+	<!-- 查询子节点 -->
+	<select id="queryChildrenPermissionById" resultType="permission">
+		select 
+			*
+		from
+			t_permission
+		where
+			pid =#{pid}
+	</select>
+	
+</mapper>
